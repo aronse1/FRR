@@ -3,13 +3,17 @@ from flask_sock import Sock
 import requests
 import threading
 import time
+import asyncio
+
 app = Flask(__name__)
 
 sock = Sock(app)
 sock.init_app(app)
 
+frames_per_second = 60
 image_buffer = None
 buffer_lock = threading.Lock()
+
 @sock.route("/send-camera")
 def sendCamera(sock):
     global image_buffer
@@ -18,7 +22,7 @@ def sendCamera(sock):
             with buffer_lock:
                 if image_buffer:
                     sock.send(image_buffer)
-            time.sleep(0.1)
+            time.sleep(1/frames_per_second)
     except Exception as e:
         print('Socket-Verbindung unterbrochen:', e)
         sock.close()
@@ -36,7 +40,7 @@ def receiveCamera(sock):
         print('Socket-Verbindung unterbrochen:', e)
         sock.close()
   
-       
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
