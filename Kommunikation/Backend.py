@@ -12,9 +12,10 @@ sock.init_app(app)
 
 frames_per_second = 60
 image_buffer = None
+input_buffer = None
 buffer_lock = threading.Lock()
 
-@sock.route("/send-camera")
+@sock.route("/receive-camera")
 def sendCamera(sock):
     global image_buffer
     try:
@@ -28,7 +29,7 @@ def sendCamera(sock):
         sock.close()
 
 
-@sock.route("/receive-camera")
+@sock.route("/send-camera")
 def receiveCamera(sock):
     global image_buffer
     try:
@@ -40,6 +41,10 @@ def receiveCamera(sock):
         print('Socket-Verbindung unterbrochen:', e)
         sock.close()
   
+@sock.route("/receive-movement-input")
+def handleMovement(sock):
+    return
+
 
 
 if __name__ == '__main__':
