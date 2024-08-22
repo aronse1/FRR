@@ -11,21 +11,20 @@ sock = Sock(app)
 sock.init_app(app)
 
 frames_per_second = 60
-image_buffer = None
+image_buffer = "No picture"
 input_buffer = None
 buffer_lock = threading.Lock()
 
 @sock.route("/receive-camera")
 def sendCamera(sock):
     global image_buffer
-    try:
+    try: 
         while True:
             with buffer_lock:
                 if image_buffer:
                     sock.send(image_buffer)
             time.sleep(1/frames_per_second)
     except Exception as e:
-        print('Socket-Verbindung unterbrochen:', e)
         sock.close()
 
 
@@ -38,6 +37,7 @@ def receiveCamera(sock):
             with buffer_lock:
                 image_buffer = data
     except Exception as e:
+        image_buffer = "No picture"
         print('Socket-Verbindung unterbrochen:', e)
         sock.close()
   
