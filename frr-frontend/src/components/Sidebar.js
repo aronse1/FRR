@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faCog, faBars, faPlusCircle, faCamera } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faCog, faBars, faCamera, faGamepad } from '@fortawesome/free-solid-svg-icons';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -30,9 +30,9 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/create">
-            <FontAwesomeIcon icon={faPlusCircle} className="sidebar-icon" />
-            {isOpen && <span className="sidebar-text">Create</span>}
+          <Link to="/controller">
+            <FontAwesomeIcon icon={faGamepad} className="sidebar-icon" />
+            {isOpen && <span className="sidebar-text">Controller</span>}
           </Link>
         </li>
         <li className="settings">
