@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -6,28 +6,74 @@ import './Camera.css';
 
 const Camera = () => {
   const [imageSrc, setImageSrc] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [noPictureReceived, setNoPictureReceived] = useState(false);
+  const wsRef = useRef(null); // Use useRef to store the WebSocket instance
 
-  useEffect(() => {
-    // Erstelle eine WebSocket-Verbindung
-    const ws = new WebSocket('ws://localhost:5000/recieve-camera');
+  const resetState = () => {
+    setImageSrc(null);
+    setIsConnected(false);
+    setErrorMessage(null);
+    setNoPictureReceived(false);
+  };
 
-    // Event-Handler für eingehende Nachrichten
-    ws.onmessage = (event) => {
-      // Erwarte, dass die Daten als Blob (Binärdaten) empfangen werden
-      const reader = new FileReader();
+  const startWebSocket = () => {
+    if (!isConnected) {
+      wsRef.current = new WebSocket('ws://192.168.178.24:5000/receive-camera');
 
-      reader.onloadend = () => {
-        // Konvertiere die Blob-Daten in ein Base64-URL
-        setImageSrc(reader.result);
+      wsRef.current.onopen = () => {
+        console.log('WebSocket connection established');
+        setIsConnected(true);
+        setErrorMessage(null); // Clear any existing error message
+        setNoPictureReceived(false); // Reset the "No picture" state
       };
 
-      // Lies die empfangenen Daten als Data URL
-      reader.readAsDataURL(event.data);
-    };
+      wsRef.current.onmessage = (event) => {
+        if (event.data === "No picture") {
+          console.log('No picture received, treating as connection lost.');
+          setNoPictureReceived(true);
+          setErrorMessage('No picture available.');
+        } else {
+          const reader = new FileReader();
 
-    // WebSocket schließen, wenn die Komponente unmontiert wird
+          reader.onloadend = () => {
+            setImageSrc(reader.result);
+            setNoPictureReceived(false); // Reset the "No picture" state when a valid image is received
+            setErrorMessage(null); // Clear any error message
+          };
+
+          reader.readAsDataURL(event.data);
+        }
+      };
+
+      wsRef.current.onerror = (error) => {
+        console.error('WebSocket error observed:', error);
+        setErrorMessage('WebSocket error observed.');
+      };
+
+      wsRef.current.onclose = (event) => {
+        console.log('WebSocket is closed now.', event);
+        resetState(); // Reset the entire state when the WebSocket is closed
+      };
+    } else if (noPictureReceived) {
+      setErrorMessage('No picture available. Please try again later.');
+    }
+  };
+
+  const stopWebSocket = () => {
+    if (wsRef.current) {
+      wsRef.current.close(); // Close the WebSocket connection
+      resetState(); // Reset the entire state manually
+    }
+  };
+
+  useEffect(() => {
     return () => {
-      ws.close();
+      // Clean up the WebSocket connection when the component unmounts
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
     };
   }, []);
 
@@ -44,11 +90,21 @@ const Camera = () => {
                 <>
                   <h2>Camera</h2>
                   <div className="camera-box">
-                    {imageSrc ? (
+                    {errorMessage ? (
+                      <p className="error-message">{errorMessage}</p>
+                    ) : imageSrc ? (
                       <img src={imageSrc} alt="Camera Stream" />
                     ) : (
-                      <p>Loading...</p>
+                      <p>No Connection established</p>
                     )}
+                  </div>
+                  <div className="camera-controls">
+                    <button onClick={startWebSocket} disabled={isConnected}>
+                      Start Connection
+                    </button>
+                    <button onClick={stopWebSocket} disabled={!isConnected}>
+                      Stop Connection
+                    </button>
                   </div>
                 </>
               }
