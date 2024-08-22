@@ -100,7 +100,7 @@
 
 /* Optional: Hover effects for icons and text separately */
 .dashboard-sidebar a:hover .sidebar-icon {
-    color: #ffffff; /* Ändern Sie die Icon-Farbe beim Hover nach Wunsch */
+    color: #18acf2; /* Ändern Sie die Icon-Farbe beim Hover nach Wunsch */
 }
 
 .dashboard-sidebar a:hover .sidebar-text {
