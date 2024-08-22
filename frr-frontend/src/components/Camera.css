@@ -39,3 +39,30 @@
     border-radius: 4px;
   }
   
+  .camera-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .camera-controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #18acf2;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .camera-controls button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  .camera-controls button:hover:not(:disabled) {
+    background-color: #1e8fff;
+  }
+  
