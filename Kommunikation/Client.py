@@ -7,7 +7,7 @@ from io import BytesIO
 import time
 
 async def send_camera_data():
-    uri = "ws://localhost:5000/receive-camera"  
+    uri = "ws://localhost:5000/send-camera"  
     async with websockets.connect(uri) as websocket:
         cap = cv2.VideoCapture(0)  
         
