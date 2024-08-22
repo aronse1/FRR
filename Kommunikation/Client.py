@@ -4,30 +4,29 @@ import asyncio
 import numpy as np
 from PIL import Image
 from io import BytesIO
+import time
 
 async def send_camera_data():
-    uri = "ws://localhost:5000/receive-camera"  # Server WebSocket-URL
+    uri = "ws://localhost:5000/receive-camera"  
     async with websockets.connect(uri) as websocket:
-        cap = cv2.VideoCapture(0)  # Webcam initialisieren (0 für Standard-Kamera)
+        cap = cv2.VideoCapture(0)  
         
         while True:
             ret, frame = cap.read()
             if not ret:
                 break
 
-            # Bild komprimieren
+         
             img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
             buffer = BytesIO()
-            img.save(buffer, format="JPEG", quality=50)  # Komprimierung mit JPEG-Qualität 50%
+            img.save(buffer, format="JPEG", quality=50) 
             compressed_img = buffer.getvalue()
 
-            # Bild über WebSocket senden
+
             await websocket.send(compressed_img)
 
-            # Warte ein bisschen, um die FPS zu kontrollieren
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(1/60)
 
-        cap.release()  # Kamera freigeben
+        cap.release()  
 
-# Starte die asyncio Schleife
 asyncio.get_event_loop().run_until_complete(send_camera_data())
