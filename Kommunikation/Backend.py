@@ -13,6 +13,7 @@ sock.init_app(app)
 frames_per_second = 60
 image_buffer = "No picture"
 input_buffer = "idle"
+old_input_buffer = "idle"
 image_buffer_lock = threading.Lock()
 input_buffer_lock = threading.Lock()
 
@@ -48,8 +49,9 @@ def receiveMovement(sock):
     try: 
         while True:
             with input_buffer_lock:
-                if not input_buffer == "idle":
+                if not input_buffer == "idle" and not input_buffer == old_input_buffer:
                     sock.send(input_buffer)
+                    old_input_buffer = input_buffer
             time.sleep(0.1)
     except Exception as e:
         input_buffer = "idle"
