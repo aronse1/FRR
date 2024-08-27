@@ -70,7 +70,6 @@ const Controller = () => {
 
     wsControlRef.current.onerror = () => {
       setIsControlActive(false);
-      
     };
 
     return () => {
@@ -82,19 +81,19 @@ const Controller = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (isControlActive && wsControlRef.current && wsControlRef.current.readyState === WebSocket.OPEN) {
+      if (isControlActive && wsControlRef.current) {
         wsControlRef.current.send(JSON.stringify({ type: 'keydown', key: event.key }));
         setPressedKey(event.key);
       }
     };
-  
+
     const handleKeyUp = (event) => {
-      if (isControlActive && wsControlRef.current && wsControlRef.current.readyState === WebSocket.OPEN) {
+      if (isControlActive && wsControlRef.current) {
         wsControlRef.current.send(JSON.stringify({ type: 'keyup', key: event.key }));
         setPressedKey(null);
       }
     };
-  
+
     if (isControlActive) {
       window.addEventListener('keydown', handleKeyDown);
       window.addEventListener('keyup', handleKeyUp);
@@ -103,7 +102,7 @@ const Controller = () => {
       window.removeEventListener('keyup', handleKeyUp);
       setPressedKey(null);
     }
-  
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
