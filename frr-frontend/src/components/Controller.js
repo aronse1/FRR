@@ -139,35 +139,31 @@ const Controller = () => {
                 </button>
               </div>
             </div>
-
-            {/* Neue Box für die Arrow-Keys und die Control-Einheit */}
-            <div className="controller-arrow-box">
-              <div className="arrow-key-container">
-                <div className={`arrow-key ${pressedKey === 'ArrowUp' ? 'active' : ''}`}>
-                  &#9650;
+            <div className="arrow-key-container">
+              <div className={`arrow-key ${pressedKey === 'ArrowUp' ? 'active' : ''}`}>
+                &#9650;
+              </div>
+              <div className="arrow-key-row">
+                <div className={`arrow-key ${pressedKey === 'ArrowLeft' ? 'active' : ''}`}>
+                  &#9664;
                 </div>
-                <div className="arrow-key-row">
-                  <div className={`arrow-key ${pressedKey === 'ArrowLeft' ? 'active' : ''}`}>
-                    &#9664;
-                  </div>
-                  <div className={`arrow-key ${pressedKey === 'ArrowDown' ? 'active' : ''}`}>
-                    &#9660;
-                  </div>
-                  <div className={`arrow-key ${pressedKey === 'ArrowRight' ? 'active' : ''}`}>
-                    &#9654;
-                  </div>
+                <div className={`arrow-key ${pressedKey === 'ArrowDown' ? 'active' : ''}`}>
+                  &#9660;
                 </div>
-                <div className={`space-bar ${pressedKey === ' ' ? 'active' : ''}`}>
-                  Space
+                <div className={`arrow-key ${pressedKey === 'ArrowRight' ? 'active' : ''}`}>
+                  &#9654;
                 </div>
-                <div className="control-toggle">
-                  <button 
-                    onClick={toggleControl}
-                    className={isControlActive ? 'active' : ''}
-                  >
-                    {isControlActive ? 'Deactivate' : 'Activate'}
-                  </button>
-                </div>
+              </div>
+              <div className={`space-bar ${pressedKey === ' ' ? 'active' : ''}`}>
+                Space
+              </div>
+              <div className="control-toggle">
+                <button 
+                  onClick={toggleControl}
+                  className={isControlActive ? 'active' : ''}
+                >
+                  {isControlActive ? 'Deactivate' : 'Activate'}
+                </button>
               </div>
             </div>
           </div>
