@@ -53,7 +53,6 @@ def receiveMovement(sock):
                 if not input_buffer == "idle" and input_buffer != old_input_buffer:
                     sock.send(input_buffer)
                     old_input_buffer = input_buffer
-            time.sleep(0.1)
     except Exception as e:
         input_buffer = "idle"
         print('Socket-Verbindung unterbrochen:', e)
