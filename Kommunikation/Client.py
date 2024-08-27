@@ -22,7 +22,7 @@ async def send_camera_data():
 
             await websocket.send(compressed_img)
 
-            await asyncio.sleep(1 / 60)
+            await asyncio.sleep(1 /30)
 
         cap.release()
 
