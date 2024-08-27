@@ -26,6 +26,7 @@ const Controller = () => {
       wsCameraRef.current.onmessage = (event) => {
         if (event.data === "No picture") {
           setErrorMessage('No picture available.');
+          setIsControlActive(false); 
         } else {
           const reader = new FileReader();
           reader.onloadend = () => {
@@ -64,6 +65,11 @@ const Controller = () => {
 
     wsControlRef.current.onclose = () => {
       console.log('WebSocket for controls closed');
+      setIsControlActive(false);  // Deactivate control when connection is closed
+    };
+
+    wsControlRef.current.onerror = () => {
+      setIsControlActive(false);
     };
 
     return () => {
