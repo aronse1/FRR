@@ -5,8 +5,11 @@ import json
 from PIL import Image
 from io import BytesIO
 import time
+
+IP = "192.168.178.24"
+
 async def send_camera_data():
-    uri = "ws://localhost:5000/send-camera"
+    uri = f"ws://{IP}:5000/send-camera"
     async with websockets.connect(uri) as websocket:
         cap = cv2.VideoCapture(0)
 
@@ -30,7 +33,7 @@ async def send_camera_data():
 movementlist = [0,0,0,0]
 
 async def receive_movement_data():
-    uri = "ws://localhost:5000/receive-movement-input"
+    uri = f"ws://{IP}:5000/receive-movement-input"
     async with websockets.connect(uri) as websocket:
         while True:
             movement_data = await websocket.recv()
