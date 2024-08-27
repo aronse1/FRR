@@ -13,6 +13,19 @@ from sphero_sdk import SpheroRvrAsync
 
 IP = "192.168.178.24"
 
+speed = 0
+#heading: 0 degrees is forward, 90 degrees is to the right, 180 degrees is back, and 270 is to the left
+heading = 0
+flags = 0
+loop = asyncio.get_event_loop()
+rvr = SpheroRvrAsync(
+    dal=SerialAsyncDal(
+        loop
+    )
+)
+
+
+
 async def send_camera_data():
     uri = f"ws://{IP}:5000/send-camera"
     async with websockets.connect(uri) as websocket:
@@ -35,7 +48,7 @@ async def send_camera_data():
         cap.release()
 
 #forward, backwards, left, right, brake
-movementlist = [0,0,0,0, 0]
+movementlist = [0,0,0,0,0]
 
 async def receive_movement_data():
     uri = f"ws://{IP}:5000/receive-movement-input"
@@ -54,6 +67,8 @@ async def receive_movement_data():
                         movementlist[2] = 1
                     if direction["key"] == "ArrowRight":
                         movementlist[3] = 1
+                    if direction["key"] == " ":
+                        movementlist[4] = 1
                 if direction["type"] == "keyup":
                     if direction["key"] == "ArrowUp":
                         movementlist[0] = 0
@@ -63,55 +78,63 @@ async def receive_movement_data():
                         movementlist[2] = 0
                     if direction["key"] == "ArrowRight":
                         movementlist[3] = 0
-            print(movementlist)
-            time.sleep(0.01)
+                    if direction["key"] == " ":
+                        movementlist[4] = 0
+            #print(movementlist)
 
-speed = 0
-#heading: 0 degrees is forward, 90 degrees is to the right, 180 degrees is back, and 270 is to the left
-heading = 0
-flags = 0
+
 
 async def move_robo():
+    global rvr
+    global speed
+    global heading
+    global flags
+
+    print("Waking up Robo...")
     await rvr.wake()
-
+    print("Woke Up")
+    print("Resetting Yaw")
     await rvr.reset_yaw()
-
+    print("Resetted Yaw")
+    print("Running")
     while True: 
 
-        if movementlist[0] == 1:
+        if movementlist[0] == 1 and movementlist[1] == 0:
             # if previously going reverse, reset speed back to 64
             if flags == 1:
-                speed = 64
+                speed = 32
             else:
-                # increase speed
-                speed += 64
+                speed +=64
             # go forward
             flags = 0
-        if movementlist[1] == 1:
+        else:
+            speed = 0
+        if movementlist[1] == 1 and movementlist[0] == 0:
             # if previously going forward, reset speed back to 64
             if flags == 0:
-                speed = 64
+                speed = 32
             else:
-                # else increase speed
-                speed += 64
+                speed +=64
             # go reverse
             flags = 1
+        #else:
+        #    speed = 0
         if movementlist[2] == 1:
             # turning left
-            heading -= 10
+            heading -= 20
         if movementlist[3] == 1:
             # turning right
-            heading += 10
+            heading += 20
         if movementlist[4] == 1:
             # reset speed and flags, but don't modify heading.
             speed = 0
             flags = 0
-
+            
         # check the speed value, and wrap as necessary.
-        if speed > 255:
-            speed = 255
-        elif speed < -255:
-            speed = -255
+        if speed > 48:
+            speed = 48
+        elif speed < -48:
+            speed = -48
 
         # check the heading value, and wrap as necessary.
         if heading > 359:
@@ -119,6 +142,10 @@ async def move_robo():
         elif heading < 0:
             heading = 359 + heading
 
+        print(movementlist)
+        print("Speed:" + str(speed))
+        print("Heading:" + str(heading))
+        print("Flag:" + str(flags))
         # issue the driving command
         await rvr.drive_with_heading(speed, heading, flags)
 
@@ -127,6 +154,7 @@ async def move_robo():
 
 
 async def main():
+    
     # Run both tasks concurrently
     await asyncio.gather(
         send_camera_data(),
@@ -134,11 +162,32 @@ async def main():
         move_robo()
     )
 
-# Start the asyncio event loop
-loop = asyncio.get_event_loop().run_until_complete(main())
 
-rvr = SpheroRvrAsync(
-    dal=SerialAsyncDal(
-        loop
-    )
-)
+# Start the asyncio event loop
+loop.run_until_complete(main())
+
+
+
+
+# async def main():
+#     global rvr
+
+#     # Initialize the RVR before starting the main event loop
+#     rvr = SpheroRvrAsync(
+#         dal=SerialAsyncDal(
+#             loop=asyncio.get_event_loop()
+#         )
+#     )
+    
+#     # Run both tasks concurrently
+#     await asyncio.gather(
+#         send_camera_data(),
+#         receive_movement_data(),
+#         move_robo()
+#     )
+
+# # Start the asyncio event loop
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(main())
+
+

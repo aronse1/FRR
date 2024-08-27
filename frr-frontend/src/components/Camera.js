@@ -20,7 +20,7 @@ const Camera = () => {
 
   const startWebSocket = () => {
     if (!isConnected) {
-      wsRef.current = new WebSocket('ws://192.168.178.24:5000/receive-camera');
+      wsRef.current = new WebSocket('ws://robo.local:5000/receive-camera');
 
       wsRef.current.onopen = () => {
         console.log('WebSocket connection established');

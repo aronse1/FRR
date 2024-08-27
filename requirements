@@ -1,0 +1,16 @@
+aiohttp
+requests
+websocket-client
+pytest-asyncio
+pytest
+twine
+pyserial
+pyserial-asyncio
+websockets
+flask
+flask_sock
+opencv-python
+Pillow
+numpy
+websocket-client
+sphero_sdk
