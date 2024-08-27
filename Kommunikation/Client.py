@@ -5,6 +5,11 @@ import json
 from PIL import Image
 from io import BytesIO
 import time
+
+from sphero_sdk import SerialAsyncDal
+from sphero_sdk import SpheroRvrAsync
+
+
 async def send_camera_data():
     uri = "ws://localhost:5000/send-camera"
     async with websockets.connect(uri) as websocket:
@@ -26,8 +31,8 @@ async def send_camera_data():
 
         cap.release()
 
-#forward, backwards, left, right
-movementlist = [0,0,0,0]
+#forward, backwards, left, right, brake
+movementlist = [0,0,0,0, 0]
 
 async def receive_movement_data():
     uri = "ws://localhost:5000/receive-movement-input"
@@ -57,14 +62,80 @@ async def receive_movement_data():
                         movementlist[3] = 0
             print(movementlist)
             time.sleep(0.01)
-        
+
+speed = 0
+#heading: 0 degrees is forward, 90 degrees is to the right, 180 degrees is back, and 270 is to the left
+heading = 0
+flags = 0
+
+async def move_robo():
+    await rvr.wake()
+
+    await rvr.reset_yaw()
+
+    while True: 
+
+        if movementlist[0] == 1:
+            # if previously going reverse, reset speed back to 64
+            if flags == 1:
+                speed = 64
+            else:
+                # increase speed
+                speed += 64
+            # go forward
+            flags = 0
+        if movementlist[1] == 1:
+            # if previously going forward, reset speed back to 64
+            if flags == 0:
+                speed = 64
+            else:
+                # else increase speed
+                speed += 64
+            # go reverse
+            flags = 1
+        if movementlist[2] == 1:
+            # turning left
+            heading -= 10
+        if movementlist[3] == 1:
+            # turning right
+            heading += 10
+        if movementlist[4] == 1:
+            # reset speed and flags, but don't modify heading.
+            speed = 0
+            flags = 0
+
+        # check the speed value, and wrap as necessary.
+        if speed > 255:
+            speed = 255
+        elif speed < -255:
+            speed = -255
+
+        # check the heading value, and wrap as necessary.
+        if heading > 359:
+            heading = heading - 359
+        elif heading < 0:
+            heading = 359 + heading
+
+        # issue the driving command
+        await rvr.drive_with_heading(speed, heading, flags)
+
+        # sleep the infinite loop for a 10th of a second to avoid flooding the serial port.
+        await asyncio.sleep(0.1)
+
 
 async def main():
     # Run both tasks concurrently
     await asyncio.gather(
         send_camera_data(),
-        receive_movement_data()
+        receive_movement_data(),
+        move_robo()
     )
 
 # Start the asyncio event loop
-asyncio.get_event_loop().run_until_complete(main())
+loop = asyncio.get_event_loop().run_until_complete(main())
+
+rvr = SpheroRvrAsync(
+    dal=SerialAsyncDal(
+        loop
+    )
+)
