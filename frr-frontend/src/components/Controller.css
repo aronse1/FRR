@@ -13,26 +13,82 @@
 .controller-main {
   padding: 20px;
   overflow-x: auto;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: white;
+}
+
+.controller-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.controller-camera-box {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: 40px;
+  margin-top: 20px;
+  max-width: 600px;
+  min-width: 600px; /* Neue Mindestbreite */
+  min-height: 520px; /* Neue Mindesthöhe */
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.controller-header {
-  align-self: flex-start;
-  margin-bottom: 20px;
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
 }
 
-h2 {
-  font-size: 24px;
+.controller-camera-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 31.5px;
+}
+
+.controller-camera-box p {
+  margin: 0;
+  flex-grow: 1; /* Macht den Text flexibel, sodass er in der Mitte bleibt */
+  display: flex;
+  align-items: center; /* Zentriert den Text vertikal */
+  justify-content: center; /* Zentriert den Text horizontal */
+}
+
+.controller-camera-controls button {
+  padding: 10px 20px;
+  font-size: 16px;
   color: white;
+  background-color: #18acf2;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.controller-camera-controls button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.controller-camera-controls button:hover:not(:disabled) {
+  background-color: #1e8fff;
 }
 
 .arrow-key-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  margin-top: 180px;
+  flex: 1;
 }
 
 .arrow-key-row {
@@ -45,13 +101,30 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid white;
+  border: 2px solid black;
   margin: 5px;
   font-size: 24px;
-  color: white;
+  color: black;
 }
 
 .arrow-key.active {
+  background-color: #18acf2;
+}
+
+.space-bar {
+  width: 160px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+  margin-top: 20px;
+  font-size: 24px;
+  color: black;
+  text-align: center;
+}
+
+.space-bar.active {
   background-color: #18acf2;
 }
 
@@ -73,6 +146,10 @@ h2 {
   background-color: #18acf2;
 }
 
-.control-toggle button:hover {
+.control-toggle button.active:hover {
+  background-color: #18acf2;
+}
+
+.control-toggle button:hover:not(.active) {
   background-color: #555;
 }
