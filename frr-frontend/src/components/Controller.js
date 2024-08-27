@@ -147,6 +147,9 @@ const Controller = () => {
                   &#9654;
                 </div>
               </div>
+              <div className={`space-bar ${pressedKey === ' ' ? 'active' : ''}`}>
+                Space
+              </div>
               <div className="control-toggle">
                 <button 
                   onClick={toggleControl}
