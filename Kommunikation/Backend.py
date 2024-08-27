@@ -46,10 +46,11 @@ def receiveCamera(sock):
 @sock.route("/receive-movement-input")
 def receiveMovement(sock):
     global input_buffer
+    global old_input_buffer
     try: 
         while True:
             with input_buffer_lock:
-                if not input_buffer == "idle" and not input_buffer == old_input_buffer:
+                if not input_buffer == "idle" and input_buffer != old_input_buffer:
                     sock.send(input_buffer)
                     old_input_buffer = input_buffer
             time.sleep(0.1)
