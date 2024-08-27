@@ -87,7 +87,7 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 200px;
+  margin-top: 180px;
   flex: 1;
 }
 
@@ -101,14 +101,31 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid white;
+  border: 2px solid black;
   margin: 5px;
   font-size: 24px;
-  color: white;
+  color: black;
 }
 
 .arrow-key.active {
-  background-color: #4caf50;
+  background-color: #18acf2;
+}
+
+.space-bar {
+  width: 160px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+  margin-top: 20px;
+  font-size: 24px;
+  color: black;
+  text-align: center;
+}
+
+.space-bar.active {
+  background-color: #18acf2;
 }
 
 .control-toggle {
