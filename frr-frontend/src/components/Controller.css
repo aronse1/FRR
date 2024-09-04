@@ -33,7 +33,7 @@ h2 {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-left: 80px;
-  margin-top: 20px;
+  margin-top: 10px;
   max-width: 600px;
   min-width: 600px; /* Neue Mindestbreite */
   min-height: 520px; /* Neue Mindesthöhe */
@@ -88,15 +88,14 @@ img {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 140px;
+  margin-top: 70px;
   margin-right: 170px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Ensures content is stacked vertically */
   align-items: center;
   min-width: 20px;
   min-height: 20px;
 }
-
 .arrow-key-container {
   display: flex;
   flex-direction: column;
@@ -166,4 +165,16 @@ img {
 
 .control-toggle button:hover:not(.active) {
   background-color: #555;
+}
+
+
+
+.controller-block-status {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px; /* Add spacing from the control box */
+  text-align: center;
+  width: 300px; /* Adjust width as needed */
 }

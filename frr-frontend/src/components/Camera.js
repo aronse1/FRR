@@ -20,7 +20,7 @@ const Camera = () => {
 
   const startWebSocket = () => {
     if (!isConnected) {
-      wsRef.current = new WebSocket('ws://robo.local:5000/receive-camera');
+      wsRef.current = new WebSocket('ws://192.168.178.24:5000');
 
       wsRef.current.onopen = () => {
         console.log('WebSocket connection established');
@@ -35,15 +35,11 @@ const Camera = () => {
           setNoPictureReceived(true);
           setErrorMessage('No picture available.');
         } else {
-          const reader = new FileReader();
-
-          reader.onloadend = () => {
-            setImageSrc(reader.result);
-            setNoPictureReceived(false); // Reset the "No picture" state when a valid image is received
-            setErrorMessage(null); // Clear any error message
-          };
-
-          reader.readAsDataURL(event.data);
+          // Directly use the Base64 string to set the image source
+          const imageSrc = `data:image/jpeg;base64,${event.data}`;
+          setImageSrc(imageSrc);
+          setNoPictureReceived(false); // Reset the "No picture" state when a valid image is received
+          setErrorMessage(null); // Clear any error message
         }
       };
 
