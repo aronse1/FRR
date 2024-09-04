@@ -1,0 +1,49 @@
+.home-container {
+  display: flex;
+  height: 100vh;
+}
+
+.home-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #b5b5b5;
+}
+
+.home-main {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: white;
+}
+
+/* Status Box Styles */
+.status-box {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  color: black;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.status-box h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #18acf2;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.status-item span {
+  font-size: 16px;
+}
