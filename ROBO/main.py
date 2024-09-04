@@ -7,6 +7,8 @@ import asyncio
 from helper_keyboard_input import KeyboardHelper
 from sphero_sdk import SerialAsyncDal
 from sphero_sdk import SpheroRvrAsync
+from sphero_sdk import RvrStreamingServices
+from sphero_sdk import BatteryVoltageStatesEnum as VoltageStates
 
 # initialize global variables
 key_helper = KeyboardHelper()
@@ -28,7 +30,15 @@ def keycode_callback(keycode):
     current_key_code = keycode
     print("Key code updated: ", str(current_key_code))
 
+async def accelerometer_handler(accelerometer_data):
+    print('Accelerometer data response: ', accelerometer_data)
+    
 
+async def imu_handler(imu_data):
+    print('IMU data response: ', imu_data)
+
+async def motor_stall_handler(response):
+    print('Motor stall response:', response)
 async def main():
     """
     Runs the main control loop for this demo.  Uses the KeyboardHelper class to read a keypress from the terminal.
@@ -45,9 +55,43 @@ async def main():
     global heading
     global flags
 
+    
     await rvr.wake()
 
     await rvr.reset_yaw()
+    
+        # Give RVR time to wake up
+    await asyncio.sleep(2)
+    
+    await rvr.sensor_control.add_sensor_data_handler(
+        service=RvrStreamingServices.accelerometer,
+        handler=accelerometer_handler
+    )
+    
+    await rvr.sensor_control.add_sensor_data_handler(
+        service=RvrStreamingServices.imu,
+        handler=imu_handler
+    )
+    
+    await rvr.enable_motor_stall_notify(is_enabled=True)
+
+    await rvr.on_motor_stall_notify(handler=motor_stall_handler)
+    
+    battery_percentage = await rvr.get_battery_percentage()
+    print('Battery percentage: ', battery_percentage)
+
+    battery_voltage_state = await rvr.get_battery_voltage_state()
+    print('Voltage state: ', battery_voltage_state)
+    
+    state_info = '[{}, {}, {}, {}]'.format(
+        '{}: {}'.format(VoltageStates.unknown.name, VoltageStates.unknown.value),
+        '{}: {}'.format(VoltageStates.ok.name, VoltageStates.ok.value),
+        '{}: {}'.format(VoltageStates.low.name, VoltageStates.low.value),
+        '{}: {}'.format(VoltageStates.critical.name, VoltageStates.critical.value)
+    )
+    print('Voltage states: ', state_info)
+    
+    await rvr.sensor_control.start(interval=250)
 
     while True:
 
@@ -118,6 +162,15 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Keyboard Interrupt...")
         key_helper.end_get_key_continuous()
+        loop.run_until_complete(
+            asyncio.gather(
+                rvr.sensor_control.clear(),
+                rvr.close()
+            )
+        )
     finally:
+        if loop.is_running():
+            loop.close()
         print("Press any key to exit.")
         exit(1)
+        
