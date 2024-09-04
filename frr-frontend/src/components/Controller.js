@@ -9,14 +9,15 @@ const Controller = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [pressedKey, setPressedKey] = useState(null);
+  const [isBlocked, setIsBlocked] = useState(false); // State für den Blockierstatus
 
   const wsCameraRef = useRef(null);
   const wsControlRef = useRef(null);
 
-  // Start WebSocket for Camera
+  // Start WebSocket für die Kamera
   const startCameraWebSocket = () => {
     if (!isConnected) {
-      wsCameraRef.current = new WebSocket('ws://192.168.178.24:5000/receive-camera');
+      wsCameraRef.current = new WebSocket('ws://192.168.178.24:5000');
 
       wsCameraRef.current.onopen = () => {
         setIsConnected(true);
@@ -28,12 +29,9 @@ const Controller = () => {
           setErrorMessage('No picture available.');
           setIsControlActive(false); 
         } else {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setImageSrc(reader.result);
-            setErrorMessage(null);
-          };
-          reader.readAsDataURL(event.data);
+          const imageSrc = `data:image/jpeg;base64,${event.data}`;
+          setImageSrc(imageSrc);
+          setErrorMessage(null);
         }
       };
 
@@ -55,17 +53,17 @@ const Controller = () => {
     }
   };
 
-  // Start WebSocket for Controls
+  // Start WebSocket für die Steuerung
   useEffect(() => {
-    wsControlRef.current = new WebSocket('ws://192.168.178.24:5000/send-movement-input');
+    wsControlRef.current = new WebSocket('ws://192.168.178.24:5001');
 
     wsControlRef.current.onopen = () => {
-      console.log('WebSocket for controls established');
+      console.log('WebSocket für die Steuerung etabliert');
     };
 
     wsControlRef.current.onclose = () => {
-      console.log('WebSocket for controls closed');
-      setIsControlActive(false);  // Deactivate control when connection is closed
+      console.log('WebSocket für die Steuerung geschlossen');
+      setIsControlActive(false);
     };
 
     wsControlRef.current.onerror = () => {
@@ -138,31 +136,39 @@ const Controller = () => {
                 </button>
               </div>
             </div>
-            <div className="arrow-key-container">
-              <div className={`arrow-key ${pressedKey === 'ArrowUp' ? 'active' : ''}`}>
-                &#9650;
-              </div>
-              <div className="arrow-key-row">
-                <div className={`arrow-key ${pressedKey === 'ArrowLeft' ? 'active' : ''}`}>
-                  &#9664;
+
+            <div className="controller-arrow-box">
+              <div className="arrow-key-container">
+                <div className={`arrow-key ${pressedKey === 'ArrowUp' ? 'active' : ''}`}>
+                  &#9650;
                 </div>
-                <div className={`arrow-key ${pressedKey === 'ArrowDown' ? 'active' : ''}`}>
-                  &#9660;
+                <div className="arrow-key-row">
+                  <div className={`arrow-key ${pressedKey === 'ArrowLeft' ? 'active' : ''}`}>
+                    &#9664;
+                  </div>
+                  <div className={`arrow-key ${pressedKey === 'ArrowDown' ? 'active' : ''}`}>
+                    &#9660;
+                  </div>
+                  <div className={`arrow-key ${pressedKey === 'ArrowRight' ? 'active' : ''}`}>
+                    &#9654;
+                  </div>
                 </div>
-                <div className={`arrow-key ${pressedKey === 'ArrowRight' ? 'active' : ''}`}>
-                  &#9654;
+                <div className={`space-bar ${pressedKey === 'Shift' ? 'active' : ''}`}>
+                  Shift
+                </div>
+                <div className="control-toggle">
+                  <button 
+                    onClick={toggleControl}
+                    className={isControlActive ? 'active' : ''}
+                  >
+                    {isControlActive ? 'Deactivate' : 'Activate'}
+                  </button>
                 </div>
               </div>
-              <div className={`space-bar ${pressedKey === ' ' ? 'active' : ''}`}>
-                Space
-              </div>
-              <div className="control-toggle">
-                <button 
-                  onClick={toggleControl}
-                  className={isControlActive ? 'active' : ''}
-                >
-                  {isControlActive ? 'Deactivate' : 'Activate'}
-                </button>
+
+              {/* Block Status Box unterhalb der Steuerung */}
+              <div className="controller-block-status">
+                <p>Robot Block Status: {isBlocked ? 'Blocked' : 'Not Blocked'}</p>
               </div>
             </div>
           </div>

@@ -32,8 +32,8 @@ h2 {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 40px;
-  margin-top: 20px;
+  margin-left: 80px;
+  margin-top: 10px;
   max-width: 600px;
   min-width: 600px; /* Neue Mindestbreite */
   min-height: 520px; /* Neue Mindesthöhe */
@@ -52,7 +52,6 @@ img {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 31.5px;
 }
 
 .controller-camera-box p {
@@ -65,6 +64,7 @@ img {
 
 .controller-camera-controls button {
   padding: 10px 20px;
+  margin-top: 31.5px;
   font-size: 16px;
   color: white;
   background-color: #18acf2;
@@ -83,11 +83,24 @@ img {
   background-color: #1e8fff;
 }
 
+.controller-arrow-box {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 70px;
+  margin-right: 170px;
+  display: flex;
+  flex-direction: column; /* Ensures content is stacked vertically */
+  align-items: center;
+  min-width: 20px;
+  min-height: 20px;
+}
 .arrow-key-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 180px;
+  margin-top: 20px;
   flex: 1;
 }
 
@@ -137,7 +150,7 @@ img {
   font-size: 16px;
   cursor: pointer;
   border: none;
-  background-color: #333;
+  background-color: #6c757d;
   color: white;
   transition: background-color 0.3s ease;
 }
@@ -152,4 +165,16 @@ img {
 
 .control-toggle button:hover:not(.active) {
   background-color: #555;
+}
+
+
+
+.controller-block-status {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px; /* Add spacing from the control box */
+  text-align: center;
+  width: 300px; /* Adjust width as needed */
 }

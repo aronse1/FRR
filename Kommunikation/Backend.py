@@ -1,76 +1,92 @@
-from flask import Flask, request, jsonify, make_response, url_for
-from flask_sock import Sock
-import requests
-import threading
-import time
+
 import asyncio
-
-app = Flask(__name__)
-
-sock = Sock(app)
-sock.init_app(app)
-
-frames_per_second = 60
-image_buffer = "No picture"
-input_buffer = "idle"
-old_input_buffer = "idle"
-image_buffer_lock = threading.Lock()
-input_buffer_lock = threading.Lock()
-
-@sock.route("/receive-camera")
-def sendCamera(sock):
-    global image_buffer
-    try: 
-        while True:
-            with image_buffer_lock:
-                if image_buffer:
-                    sock.send(image_buffer)
-            time.sleep(1/frames_per_second)
-    except Exception as e:
-        sock.close()
+import websockets
 
 
-@sock.route("/send-camera")
-def receiveCamera(sock):
-    global image_buffer
+connected_image_clients = set()
+connected_movement_clients = set()
+conected_information_clients = set()
+
+last_movement_message = "idle"
+
+async def image_handler(websocket, path):
+    connected_image_clients.add(websocket)
     try:
-        while True:
-            data = sock.receive() 
-            with image_buffer_lock:
-                image_buffer = data
-    except Exception as e:
-        image_buffer = "No picture"
-        print('Socket-Verbindung unterbrochen:', e)
-        sock.close()
-  
-@sock.route("/receive-movement-input")
-def receiveMovement(sock):
-    global input_buffer
-    global old_input_buffer
-    try: 
-        while True:
-            with input_buffer_lock:
-                if not input_buffer == "idle" and input_buffer != old_input_buffer:
-                    sock.send(input_buffer)
-                    old_input_buffer = input_buffer
-            time.sleep(0.1)
-    except Exception as e:
-        input_buffer = "idle"
-        print('Socket-Verbindung unterbrochen:', e)
-        sock.close()
+        async for message in websocket:
+            tasks = []
+            for client in connected_image_clients:
+                if client != websocket:
+                    try:
+                        tasks.append(asyncio.create_task(client.send(message)))
+                    except websockets.ConnectionClosed:
+                        connected_image_clients.remove(client)
+            if tasks:
+                await asyncio.wait(tasks)
+    except websockets.ConnectionClosedError:
+        print(f"Client {websocket} disconnected had an error")
+    except websockets.ConnectionClosed:
+        print(f"Client {websocket} disconnected")
+    finally:
+        connected_image_clients.remove(websocket)
 
-@sock.route("/send-movement-input")
-def sendMovement(sock):
-    global input_buffer
+
+
+
+async def movement_handler(websocket, path):
+    global last_movement_message
+    connected_movement_clients.add(websocket)
     try:
-        while True:
-            data = sock.receive()
-            with input_buffer_lock:
-                input_buffer = data
-    except Exception as e:
-        input_buffer = "idle"
-        print('Socket-Verbindung unterbrochen:', e)
-        sock.close()
+        async for message in websocket:
+            # Nachricht nur senden, wenn sie sich von der letzten unterscheidet
+            if message != last_movement_message:
+                tasks = []
+                for client in connected_movement_clients:
+                    if client != websocket:
+                        try:
+                            tasks.append(asyncio.create_task(client.send(message)))
+                        except websockets.ConnectionClosed:
+                            connected_movement_clients.remove(client)
+                if tasks:
+                    await asyncio.wait(tasks)
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+                # Aktualisiere die letzte Nachricht
+                last_movement_message = message
+    except websockets.ConnectionClosedError:
+        print(f"Client {websocket} disconnected had an error")
+    except websockets.ConnectionClosed:
+        print(f"Client {websocket} disconnected")
+    finally:
+        connected_movement_clients.remove(websocket)
+
+
+async def information_handler(websocket, path):
+    conected_information_clients.add(websocket)
+    try:
+        async for message in websocket:
+            tasks = []
+            for client in conected_information_clients:
+                if client != websocket:
+                    try:
+                        tasks.append(asyncio.create_task(client.send(message)))
+                    except websockets.ConnectionClosed:
+                        connected_image_clients.remove(client)
+            if tasks:
+                await asyncio.wait(tasks)
+    except websockets.ConnectionClosedError:
+        print(f"Client {websocket} disconnected had an error")
+    except websockets.ConnectionClosed:
+        print(f"Client {websocket} disconnected")
+    finally:
+        conected_information_clients.remove(websocket)
+
+
+async def main():
+    image_server = await websockets.serve(image_handler, "0.0.0.0", 5000)
+    movement_server = await websockets.serve(movement_handler, "0.0.0.0", 5001)
+    information_server = await websockets.serve(information_handler, "0.0.0.0", 5002)
+    await asyncio.gather(image_server.wait_closed(), movement_server.wait_closed(), information_server.wait_closed())
+
+
+asyncio.get_event_loop().run_until_complete(main())
+asyncio.get_event_loop().run_forever()
+
