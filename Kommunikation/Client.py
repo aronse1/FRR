@@ -16,6 +16,8 @@ from sphero_sdk import BatteryVoltageStatesEnum as VoltageStates
 
 IP = "192.168.178.24"
 
+DEBUG = False
+
 speed = 0
 #heading: 0 degrees is forward, 90 degrees is to the right, 180 degrees is back, and 270 is to the left
 heading = 0
@@ -48,7 +50,7 @@ async def imu_handler(imu_data):
 async def velocity_handler(velocity_data):
     global velocity
     velocity = velocity_data
-    print('Velocity data response:', velocity_data)
+    #print('Velocity data response:', velocity_data)
 
 async def send_camera_data():
     uri = f"ws://{IP}:5000"
@@ -175,10 +177,12 @@ async def move_robo():
         elif heading < 0:
             heading = 359 + heading
 
-        print(movementlist)
-        print("Speed:" + str(speed))
-        print("Heading:" + str(heading))
-        print("Flag:" + str(flags))
+        if DEBUG:
+            print(movementlist)
+            print("Speed:" + str(speed))
+            print("Heading:" + str(heading))
+            print("Flag:" + str(flags))
+            
         # issue the driving command
         await rvr.drive_with_heading(speed, heading, flags)
 
@@ -191,7 +195,9 @@ async def send_battery():
         try:
             async with websockets.connect(uri) as websocket:
                 battery_percentage = await rvr.get_battery_percentage()
-                print('Battery percentage: ', battery_percentage)
+                
+                if DEBUG:
+                    print('Battery percentage: ', battery_percentage)
 
                 await websocket.send(json.dumps(battery_percentage))
                 await asyncio.sleep(60)  # 1min
@@ -214,14 +220,15 @@ async def send_driving_data():
             async with websockets.connect(uri) as websocket:
                 data = [accelerometer, velocity, {"motor_stall": stall_flag}]
                 
-                print(data)
+                if DEBUG:
+                    print(data)
                 
                 await websocket.send(json.dumps(data))
-                await asyncio.sleep(1)  # 250 seconds
+                await asyncio.sleep(0.8)  # 500 millisekunden
         except websockets.ConnectionClosedError as e:
             print(f"Connection closed: {e}")
             print("Reconnecting...")
-            await asyncio.sleep(5)
+            await asyncio.sleep(0.5)
         except Exception as e:
             print(f"Unexpected error: {e}")
             break
@@ -261,7 +268,7 @@ async def main():
 
     await rvr.on_motor_stall_notify(handler=motor_stall_handler)
     
-    await rvr.sensor_control.start(interval=250)
+    await rvr.sensor_control.start(interval=800)
     
     # Run both tasks concurrently
     await asyncio.gather(
