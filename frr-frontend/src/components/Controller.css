@@ -88,7 +88,7 @@ img {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 70px;
+  margin-top: 60px;
   margin-right: 170px;
   display: flex;
   flex-direction: column; /* Ensures content is stacked vertically */
@@ -148,6 +148,7 @@ img {
 .control-toggle button {
   padding: 10px 20px;
   font-size: 16px;
+  margin-bottom: 20px;
   cursor: pointer;
   border: none;
   background-color: #6c757d;
@@ -170,7 +171,7 @@ img {
 
 
 .controller-block-status {
-  background-color: #ffffff;
+  background-color: #e7e7e7;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

@@ -9,10 +9,14 @@ const Controller = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [pressedKey, setPressedKey] = useState(null);
-  const [isBlocked, setIsBlocked] = useState(false); // State für den Blockierstatus
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [accelerometer, setAccelerometer] = useState(null);
+  const [velocity, setVelocity] = useState(null);
+  const [imuString, setImuString] = useState(null);
 
   const wsCameraRef = useRef(null);
   const wsControlRef = useRef(null);
+  const wsStatusRef = useRef(null);
 
   // Start WebSocket für die Kamera
   const startCameraWebSocket = () => {
@@ -73,6 +77,41 @@ const Controller = () => {
     return () => {
       if (wsControlRef.current) {
         wsControlRef.current.close();
+      }
+    };
+  }, []);
+
+  // WebSocket für Status (Block und Geschwindigkeitswerte)
+  useEffect(() => {
+    wsStatusRef.current = new WebSocket('ws://192.168.178.24:5003');
+
+    wsStatusRef.current.onopen = () => {
+      console.log('WebSocket für den Status etabliert');
+    };
+
+    wsStatusRef.current.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setIsBlocked(data.motor_stall); 
+        setAccelerometer(data.accelerometer);
+        setImuString(data.imu_string);
+        setVelocity(data.velocity);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+
+    wsStatusRef.current.onclose = () => {
+      console.log('WebSocket für den Status geschlossen');
+    };
+
+    wsStatusRef.current.onerror = () => {
+      console.error('WebSocket für den Status hat einen Fehler');
+    };
+
+    return () => {
+      if (wsStatusRef.current) {
+        wsStatusRef.current.close();
       }
     };
   }, []);
@@ -166,9 +205,12 @@ const Controller = () => {
                 </div>
               </div>
 
-              {/* Block Status Box unterhalb der Steuerung */}
-              <div className="controller-block-status">
+              {/* Status Box für Block Status und Geschwindigkeitswerte */}
+              <div className="controller-status-box">
                 <p>Robot Block Status: {isBlocked ? 'Blocked' : 'Not Blocked'}</p>
+                <p>Acceleration: {accelerometer ? JSON.stringify(accelerometer) : 'N/A'}</p>
+                <p>Velocity: {velocity ? JSON.stringify(velocity) : '0'}</p>
+                <p>IMU: {imuString ? imuString : '0'}</p>
               </div>
             </div>
           </div>
