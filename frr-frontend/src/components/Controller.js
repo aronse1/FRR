@@ -9,11 +9,12 @@ const Controller = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [pressedKey, setPressedKey] = useState(null);
+  const [isBlocked, setIsBlocked] = useState(false); // State für den Blockierstatus
 
   const wsCameraRef = useRef(null);
   const wsControlRef = useRef(null);
 
-  // Start WebSocket for Camera
+  // Start WebSocket für die Kamera
   const startCameraWebSocket = () => {
     if (!isConnected) {
       wsCameraRef.current = new WebSocket('ws://192.168.178.24:5000');
@@ -28,10 +29,9 @@ const Controller = () => {
           setErrorMessage('No picture available.');
           setIsControlActive(false); 
         } else {
-          // Directly use the Base64 string to set the image source
           const imageSrc = `data:image/jpeg;base64,${event.data}`;
           setImageSrc(imageSrc);
-          setErrorMessage(null); // Clear any error message
+          setErrorMessage(null);
         }
       };
 
@@ -53,17 +53,17 @@ const Controller = () => {
     }
   };
 
-  // Start WebSocket for Controls
+  // Start WebSocket für die Steuerung
   useEffect(() => {
     wsControlRef.current = new WebSocket('ws://192.168.178.24:5001');
 
     wsControlRef.current.onopen = () => {
-      console.log('WebSocket for controls established');
+      console.log('WebSocket für die Steuerung etabliert');
     };
 
     wsControlRef.current.onclose = () => {
-      console.log('WebSocket for controls closed');
-      setIsControlActive(false);  // Deactivate control when connection is closed
+      console.log('WebSocket für die Steuerung geschlossen');
+      setIsControlActive(false);
     };
 
     wsControlRef.current.onerror = () => {
@@ -137,7 +137,6 @@ const Controller = () => {
               </div>
             </div>
 
-            {/* Box for the Arrow-Keys and Control Unit */}
             <div className="controller-arrow-box">
               <div className="arrow-key-container">
                 <div className={`arrow-key ${pressedKey === 'ArrowUp' ? 'active' : ''}`}>
@@ -165,6 +164,11 @@ const Controller = () => {
                     {isControlActive ? 'Deactivate' : 'Activate'}
                   </button>
                 </div>
+              </div>
+
+              {/* Block Status Box unterhalb der Steuerung */}
+              <div className="controller-block-status">
+                <p>Robot Block Status: {isBlocked ? 'Blocked' : 'Not Blocked'}</p>
               </div>
             </div>
           </div>
