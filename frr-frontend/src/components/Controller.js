@@ -16,7 +16,7 @@ const Controller = () => {
   // Start WebSocket for Camera
   const startCameraWebSocket = () => {
     if (!isConnected) {
-      wsCameraRef.current = new WebSocket('ws://192.168.178.24:5000/receive-camera');
+      wsCameraRef.current = new WebSocket('ws://192.168.178.24:5000');
 
       wsCameraRef.current.onopen = () => {
         setIsConnected(true);
@@ -28,12 +28,10 @@ const Controller = () => {
           setErrorMessage('No picture available.');
           setIsControlActive(false); 
         } else {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setImageSrc(reader.result);
-            setErrorMessage(null);
-          };
-          reader.readAsDataURL(event.data);
+          // Directly use the Base64 string to set the image source
+          const imageSrc = `data:image/jpeg;base64,${event.data}`;
+          setImageSrc(imageSrc);
+          setErrorMessage(null); // Clear any error message
         }
       };
 
@@ -57,7 +55,7 @@ const Controller = () => {
 
   // Start WebSocket for Controls
   useEffect(() => {
-    wsControlRef.current = new WebSocket('ws://192.168.178.24:5000/send-movement-input');
+    wsControlRef.current = new WebSocket('ws://192.168.178.24:5001');
 
     wsControlRef.current.onopen = () => {
       console.log('WebSocket for controls established');
@@ -139,7 +137,7 @@ const Controller = () => {
               </div>
             </div>
 
-            {/* Neue Box für die Arrow-Keys und die Control-Einheit */}
+            {/* Box for the Arrow-Keys and Control Unit */}
             <div className="controller-arrow-box">
               <div className="arrow-key-container">
                 <div className={`arrow-key ${pressedKey === 'ArrowUp' ? 'active' : ''}`}>
@@ -156,8 +154,8 @@ const Controller = () => {
                     &#9654;
                   </div>
                 </div>
-                <div className={`space-bar ${pressedKey === ' ' ? 'active' : ''}`}>
-                  Space
+                <div className={`space-bar ${pressedKey === 'Shift' ? 'active' : ''}`}>
+                  Shift
                 </div>
                 <div className="control-toggle">
                   <button 
