@@ -7,7 +7,7 @@ Repo: [Github](https://github.com/aronse1/FRR)
 ## Technologies
 
 - Python
-- Reac
+- React
 - sphero SDK
 
 ## Architecture
