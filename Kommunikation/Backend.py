@@ -11,6 +11,7 @@ connected_information_clients = set()
 
 last_movement_message = "idle"
 
+# Websocket Verbindung für den Videostream
 async def image_handler(websocket, path):
     connected_image_clients.add(websocket)
     try:
@@ -33,7 +34,7 @@ async def image_handler(websocket, path):
 
 
 
-
+# Websocket Verbindung für die Bewegungsdaten
 async def movement_handler(websocket, path):
     global last_movement_message
     connected_movement_clients.add(websocket)
@@ -60,7 +61,7 @@ async def movement_handler(websocket, path):
     finally:
         connected_movement_clients.remove(websocket)
 
-
+# Websocket Verbundung für den Batteriestand
 async def battery_handler(websocket, path):
     conected_battery_clients.add(websocket)
     try:
@@ -81,14 +82,14 @@ async def battery_handler(websocket, path):
     finally:
         conected_battery_clients.remove(websocket)
 
-
+# Websocket-Verbindung für die Infodaten
 async def information_handler(websocket, path):
     connected_information_clients.add(websocket)
     try:
         async for message in websocket:
             try:
                 data = json.loads(message)
-                #print(data)
+
                 formatted_message = await process_message(data)
                 tasks = []
                 for client in connected_information_clients:
@@ -105,12 +106,14 @@ async def information_handler(websocket, path):
     finally:
         connected_information_clients.remove(websocket)
 
+# Nimmt das JSON vom ROBO und hübscht das ganze etwas auf
 async def process_message(data):
     accelerometer_data = data[0]["Accelerometer"]
     imu_data = data[0]["IMU"]
     velocity_data = data[1]["Velocity"]
     motor_stall_data = data[2]["motor_stall"]
     
+    # Berechnung der durchschnittlichen Beschleunigung
     if accelerometer_data["is_valid"]:
         x = accelerometer_data["X"]
         y = accelerometer_data["Y"]
@@ -118,15 +121,18 @@ async def process_message(data):
         accelerometer_avg = math.sqrt(x**2 + y**2 + z**2)
     else:
         accelerometer_avg = 0
+    # Berechnung der Geschwindigkeit
     if velocity_data["is_valid"]:
         geschwindigkeit = math.sqrt(velocity_data['X']**2 + velocity_data['Y']**2) /100000000
     else:
         geschwindigkeit = 0
+    # Schaut ob der Motor blockiert ist
     imu_yaw = imu_data["Yaw"] if imu_data["is_valid"] else 0
     if motor_stall_data != 0:
        motor_stall= motor_stall_data['isTriggered']
     else:
         motor_stall = False
+    # Aufgehübschte Daten werden ans Frontend geschickt
     formatted_data = {
         "imu_string": winkel_zu_kompass(round(imu_yaw, 2)),
         "accelerometer": round(accelerometer_avg,2),
@@ -136,7 +142,7 @@ async def process_message(data):
     print(formatted_data)
     return json.dumps(formatted_data)
 
-
+# Wandelt den Winkel in eine Himmelsrichtung um
 def winkel_zu_kompass(winkel):
     if -22.5 <= winkel < 22.5:
         return "N"
@@ -157,6 +163,7 @@ def winkel_zu_kompass(winkel):
     else:
         return "N"
 
+# Für jeden Channel wird ein Thread gestartet
 async def main():
     image_server = await websockets.serve(image_handler, "0.0.0.0", 5000)
     movement_server = await websockets.serve(movement_handler, "0.0.0.0", 5001)
