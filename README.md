@@ -63,6 +63,14 @@ Wenn Änderungen am Code vorgenommen werden, wird das Projekt automatisch neu ko
 Um die Anwendung für die Produktion bereitzustellen, können Sie den Befehl npm run build verwenden, der ein optimiertes Build-Paket erstellt.
 
 ## Backend
+Das Backend befindet sich im Ordner ````/kommunikation/Backend.py```. Der Backend Server ist die Schnittstelle zwischen dem Roboter und dem Frontend. Dieser Stellt 4 Websocket Verbindungen bereit über den der Roboter und das Frontend kommuniziert.
+Da der Roboter oft für das Frontend zu komplexe JSON Pakete überträgt, werden diese im Backend auch noch vereinfacht.
+
+Das Backend kann mit 
+```bash
+python Backend.py 
+```
+gestartet werden.
 
 ## Challenges
 
