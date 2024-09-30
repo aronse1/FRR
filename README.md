@@ -75,6 +75,8 @@ python Backend.py
 ```
 gestartet werden. Er ist Standardmäßig über Port 5000 erreichbar.
 
+Die ```Receiver_test.py``` simuliert die Kameraübertragung.
+
 ## Challenges
 
 ### Netzwerkverbingung und Entwicklungsumgebung
