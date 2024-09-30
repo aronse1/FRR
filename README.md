@@ -27,7 +27,7 @@ Auf dem Raspberry Pi läuft die Python Anwendung, welche als Benutzerschnittstel
 ### Anwendung starten
 1. Eine SSH Verbindung muss zum Roboter hergestellt werden.
 2. Die IP Adresse auf den der Client zugreift muss konfiguriert sein. Diese kann innerhalb der ``Client.py`` eingestellt werden.
-3. Eine Virtual Enviroment muss angelegt werden. Dies kann über folgendes ![Tutorial](https://docs.python.org/3/library/venv.html) durchgeführt werden.
+3. Eine Virtual Enviroment muss angelegt werden. Dies kann über folgendes [Tutorial](https://docs.python.org/3/library/venv.html) durchgeführt werden.
 4. Die Anwendung kann gestartet werden ``python Kommunikation/Client.py``
 
 ## Frontend
