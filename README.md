@@ -22,12 +22,12 @@ Der Sphero-Roboter wird mithilfe des Sphero SDK und Python auf einem Raspberry P
 
 Auf dem Raspberry Pi läuft die Python Anwendung, welche als Benutzerschnittstelle genutzt wird, so wird zum Start eine Verbindung auf das Netzwerk ``robowifi`` hergestellt. Beim Start der Anwendung wird nun eine Websocket Verbindung zu dem Backend herrgestellt. Dabei werden alle zwei Sekunden Sensorwerte übertragen. Die IMU ist dabei der am häufigsten abgefragte Sensor, da dieser wichtige Bewegungsdaten liefert. Werte sind dabei Himmelsrichtung, Beschleunigung und die Geschwindigkeit. 
 
-Über das Front-End werden nun der Tastatur Druck übermittelt. Der Client wertet diese nun aus und sendet Befehle an die Tank Drive Engine, welche mithilfe einer State Machine die Richtung und Geschwindigkeit des Roboters kontrolliert. Als Methode wird dabei das drive with heading, welches die Richtung über den Magnetometer bestimmt ![[1]](file:///home/maylis/Downloads/SpheroRVRControlSystemManual-1.pdf).
+Über das Frontend werden nun der Tastaturdruck übermittelt. Der Client wertet diesen aus und sendet Befehle an die Tank Drive Engine, welche mithilfe einer State Machine die Richtung und Geschwindigkeit des Roboters kontrolliert. Als Methode wird drive with heading verwendet, was die Richtung über den Magnetometer bestimmt ![[1]](file:///home/maylis/Downloads/SpheroRVRControlSystemManual-1.pdf).
 
 ### Anwendung starten
 1. Eine SSH Verbindung muss zum Roboter hergestellt werden.
 2. Die IP Adresse auf den der Client zugreift muss konfiguriert sein. Diese kann innerhalb der ``Client.py`` eingestellt werden.
-3. Eine Virtual Enviroment muss angelegt werden dies kann über folgendes ![Tutorial](https://docs.python.org/3/library/venv.html) durchgeführt werden.
+3. Eine Virtual Enviroment muss angelegt werden. Dies kann über folgendes ![Tutorial](https://docs.python.org/3/library/venv.html) durchgeführt werden.
 4. Die Anwendung kann gestartet werden ``python Kommunikation/Client.py``
 
 ## Frontend
