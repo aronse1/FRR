@@ -21,7 +21,7 @@ const Controller = () => {
   // Start WebSocket für die Kamera
   const startCameraWebSocket = () => {
     if (!isConnected) {
-      wsCameraRef.current = new WebSocket('ws://192.168.178.24:5000');
+      wsCameraRef.current = new WebSocket('ws://127.0.0.1:5000');
 
       wsCameraRef.current.onopen = () => {
         setIsConnected(true);
@@ -59,7 +59,7 @@ const Controller = () => {
 
   // Start WebSocket für die Steuerung
   useEffect(() => {
-    wsControlRef.current = new WebSocket('ws://192.168.178.24:5001');
+    wsControlRef.current = new WebSocket('ws://127.0.0.1:5001');
 
     wsControlRef.current.onopen = () => {
       console.log('WebSocket für die Steuerung etabliert');
@@ -83,7 +83,7 @@ const Controller = () => {
 
   // WebSocket für Status (Block und Geschwindigkeitswerte)
   useEffect(() => {
-    wsStatusRef.current = new WebSocket('ws://192.168.178.24:5003');
+    wsStatusRef.current = new WebSocket('ws://127.0.0.1:5003');
 
     wsStatusRef.current.onopen = () => {
       console.log('WebSocket für den Status etabliert');

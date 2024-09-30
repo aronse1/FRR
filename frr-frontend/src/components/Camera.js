@@ -20,7 +20,7 @@ const Camera = () => {
 
   const startWebSocket = () => {
     if (!isConnected) {
-      wsRef.current = new WebSocket('ws://192.168.178.24:5000');
+      wsRef.current = new WebSocket('ws://127.0.0.1:5000');
 
       wsRef.current.onopen = () => {
         console.log('WebSocket connection established');

@@ -11,7 +11,7 @@ const Home = () => {
 
   useEffect(() => {
     // Establish WebSocket connection
-    const socket = new WebSocket('ws://192.168.178.24:5002'); // Replace with your actual WebSocket URL
+    const socket = new WebSocket('ws://127.0.0.1:5002'); // Replace with your actual WebSocket URL
 
     // Handle incoming WebSocket messages
     socket.onmessage = (event) => {
