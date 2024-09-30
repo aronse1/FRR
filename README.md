@@ -22,7 +22,7 @@ Der Sphero-Roboter wird mithilfe des Sphero SDK und Python auf einem Raspberry P
 
 Auf dem Raspberry Pi läuft die Python Anwendung, welche als Benutzerschnittstelle genutzt wird, so wird zum Start eine Verbindung auf das Netzwerk ``robowifi`` hergestellt. Beim Start der Anwendung wird nun eine Websocket Verbindung zu dem Backend herrgestellt. Dabei werden alle zwei Sekunden Sensorwerte übertragen. Die IMU ist dabei der am häufigsten abgefragte Sensor, da dieser wichtige Bewegungsdaten liefert. Werte sind dabei Himmelsrichtung, Beschleunigung und die Geschwindigkeit. 
 
-Über das Frontend werden nun der Tastaturdruck übermittelt. Der Client wertet diesen aus und sendet Befehle an die Tank Drive Engine, welche mithilfe einer State Machine die Richtung und Geschwindigkeit des Roboters kontrolliert. Als Methode wird drive with heading verwendet, was die Richtung über den Magnetometer bestimmt ![[1]](https://github.com/sphero-inc/sphero-sdk-raspberrypi-python/blob/master/docs/SpheroRVRControlSystemManual.pdf).
+Über das Frontend werden nun der Tastaturdruck übermittelt. Der Client wertet diesen aus und sendet Befehle an die Tank Drive Engine, welche mithilfe einer State Machine die Richtung und Geschwindigkeit des Roboters kontrolliert. Als Methode wird drive with heading verwendet, was die Richtung über den Magnetometer bestimmt ![[1]](https://github.com/sphero-inc/sphero-sdk-raspberrypi-python/blob/master/docs/SpheroRVRControlSystemManual.pdf). Bilder werden vorher in einen Base64-String umgewandelt und im Frontend zurück interpretiert.
 
 ### Anwendung starten
 1. Eine SSH Verbindung muss zum Roboter hergestellt werden.
@@ -35,7 +35,7 @@ Auf dem Raspberry Pi läuft die Python Anwendung, welche als Benutzerschnittstel
 ### Beschreibung der Frontend-Komponenten:
 Camera.js: Diese Komponente stellt den Video-Feed des Roboters dar. Sie verbindet sich über eine WebSocket-Verbindung zum Backend, um den Live-Stream von der am Roboter befestigten Kamera zu empfangen. Die WebSocket-Verbindung wird in der startWebSocket-Funktion initialisiert, und wenn die Komponente nicht mehr benötigt wird oder geschlossen wird, wird die Verbindung mit stopWebSocket ordnungsgemäß geschlossen.
 
-Controller.js: Diese Komponente enhält die Logik zur Steuerung des Roboters. Hier können die Tastaturbefehle erfasst und an das Backend gesendet werden, um Bewegungen oder Aktionen des Roboters auszulösen.
+Controller.js: Diese Komponente enhält die Logik zur Steuerung des Roboters. Hier können die Tastaturbefehle erfasst und an das Backend gesendet werden, um Bewegungen oder Aktionen des Roboters auszulösen. Diese werden in einem JSON Packet an den Server gesendet: {"type" : "keyDown", "key": "ArrowUp"}
 
 Header.js & Sidebar.js: Diese Komponenten sind für das Layout der Benutzeroberfläche verantwortlich, indem sie den Header und eine Sidebar des Dashboards darstellen.
 
@@ -63,14 +63,14 @@ Wenn Änderungen am Code vorgenommen werden, wird das Projekt automatisch neu ko
 Um die Anwendung für die Produktion bereitzustellen, können Sie den Befehl npm run build verwenden, der ein optimiertes Build-Paket erstellt.
 
 ## Backend
-Das Backend befindet sich im Ordner ````/kommunikation/Backend.py```. Der Backend Server ist die Schnittstelle zwischen dem Roboter und dem Frontend. Dieser Stellt 4 Websocket Verbindungen bereit über den der Roboter und das Frontend kommuniziert.
+Das Backend befindet sich im Ordner ```/kommunikation/Backend.py```. Der Backend Server ist die Schnittstelle zwischen dem Roboter und dem Frontend. Dieser Stellt 4 Websocket Verbindungen bereit über den der Roboter und das Frontend kommuniziert.
 Da der Roboter oft für das Frontend zu komplexe JSON Pakete überträgt, werden diese im Backend auch noch vereinfacht.
 
 Das Backend kann mit 
 ```bash
 python Backend.py 
 ```
-gestartet werden.
+gestartet werden. Er ist Standardmäßig über Port 5000 erreichbar.
 
 ## Challenges
 
