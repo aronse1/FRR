@@ -8,10 +8,12 @@ Fantastic RPC Robot
 - sphero SDK
 
 ## Architecture
-Verteilungsdiagram
+### Verteilungsdiagram
+
 <img src="FRR-architecture.png">
 
-Komponentendiagram
+### Komponentendiagram
+
 <img src="Komponenten.png">
 
 
