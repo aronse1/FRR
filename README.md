@@ -16,12 +16,9 @@ Fantastic RPC Robot
 
 <img src="Komponenten.png">
 
-
 ## Hardware-Client
-Using the sphero SDK and Python on a Raspberry Pi, we can control the robot.
-A webcam fixed to the robot will stream a live video to the backend.
-3D-printed fixture will keep the Raspberry Pi and the webcam in place.
-Communication from the Raspberry Pi to the robot works with a serial interface.
+
+Der Sphero-Roboter wird mithilfe des Sphero SDK und Python auf einem Raspberry Pi gesteuert. Eine am Roboter befestigte Webcam überträgt einen Live-Video-Stream an das Backend. Eine 3D-gedruckte Halterung sorgt dafür, dass sowohl der Raspberry Pi als auch die Webcam stabil am Roboter montiert sind. Die Kommunikation zwischen dem Raspberry Pi und dem Roboter erfolgt über eine serielle Schnittstelle.
 
 ## Frontend
 
@@ -29,10 +26,9 @@ Communication from the Raspberry Pi to the robot works with a serial interface.
 
 ## Challenges
 
-### IDE
-Theres no common connection between the components.
-That's why we set up a WLAN network.
+### Netzwerkverbingung und Entwicklungsumgebung
 
-### Latency
-There was a huge delay (15sec) for the video.
-Solution: data transformed into Base64 and stopped using a buffer.
+Zwischen den verschiedenen Komponenten existierte keine gemeinsame Verbindung. Aus diesem Grund wurde ein WLAN-Netzwerk eingerichtet, um die Kommunikation zu ermöglichen.
+
+### Latenz
+Zu Beginn gab es eine erhebliche Verzögerung von bis zu 15 Sekunden beim Video-Stream. Die Lösung bestand darin, die Daten in Base64 umzuwandeln und auf den Einsatz eines Buffers zu verzichten, um die Übertragungsverzögerung zu minimieren.
