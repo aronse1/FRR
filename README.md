@@ -24,6 +24,12 @@ Auf dem Raspberry Pi läuft die Python Anwendung, welche als Benutzerschnittstel
 
 Über das Front-End werden nun der Tastatur Druck übermittelt. Der Client wertet diese nun aus und sendet Befehle an die Tank Drive Engine, welche mithilfe einer State Machine die Richtung und Geschwindigkeit des Roboters kontrolliert. Als Methode wird dabei das drive with heading, welches die Richtung über den Magnetometer bestimmt ![[1]](file:///home/maylis/Downloads/SpheroRVRControlSystemManual-1.pdf).
 
+### Anwendung starten
+1. Eine SSH Verbindung muss zum Roboter hergestellt werden.
+2. Die IP Adresse auf den der Client zugreift muss konfiguriert sein. Diese kann innerhalb der ``Client.py`` eingestellt werden.
+3. Eine Virtual Enviroment muss angelegt werden dies kann über folgendes ![Tutorial](https://docs.python.org/3/library/venv.html) durchgeführt werden.
+4. Die Anwendung kann gestartet werden ``python Kommunikation/Client.py``
+
 ## Frontend
 
 ## Backend
