@@ -32,6 +32,36 @@ Auf dem Raspberry Pi läuft die Python Anwendung, welche als Benutzerschnittstel
 
 ## Frontend
 
+### Beschreibung der Frontend-Komponenten:
+Camera.js: Diese Komponente stellt den Video-Feed des Roboters dar. Sie verbindet sich über eine WebSocket-Verbindung zum Backend, um den Live-Stream von der am Roboter befestigten Kamera zu empfangen. Die WebSocket-Verbindung wird in der startWebSocket-Funktion initialisiert, und wenn die Komponente nicht mehr benötigt wird oder geschlossen wird, wird die Verbindung mit stopWebSocket ordnungsgemäß geschlossen.
+
+Controller.js: Diese Komponente enhält die Logik zur Steuerung des Roboters. Hier können die Tastaturbefehle erfasst und an das Backend gesendet werden, um Bewegungen oder Aktionen des Roboters auszulösen.
+
+Header.js & Sidebar.js: Diese Komponenten sind für das Layout der Benutzeroberfläche verantwortlich, indem sie den Header und eine Sidebar des Dashboards darstellen.
+
+Home.js: Dies ist die Hauptseite der Anwendung, die die verschiedenen Komponenten wie Camera, Controller, und Sidebar zusammenführt.
+
+### Schritte zum Starten des Frontend-Projekts:
+
+#### Voraussetzungen:
+Node.js muss auf dem lokalen System installiert sein. npm (Node Package Manager) wird ebenfalls benötigt, was normalerweise zusammen mit Node.js installiert wird.
+
+#### Installation und Start:
+Projekt lokal klonen oder herunterladen: Stellen Sie sicher, dass die Quellcodes auf Ihrem lokalen Rechner vorliegen. Navigieren Sie dazu über das Terminal in das Projektverzeichnis.
+
+"npm install"
+
+Dieser Befehl installiert alle notwendigen Abhängigkeiten, die im package.json definiert sind. Sobald die Abhängigkeiten installiert sind, kann der Entwicklungsserver gestartet werden. Verwenden Sie folgenden Befehl:
+
+"npm start"
+
+Dies startet das Frontend im Entwicklungsmodus. Die Anwendung wird standardmäßig auf http://localhost:3000 zugänglich sein.
+
+
+Hinweise:
+Wenn Änderungen am Code vorgenommen werden, wird das Projekt automatisch neu kompiliert und aktualisiert.
+Um die Anwendung für die Produktion bereitzustellen, können Sie den Befehl npm run build verwenden, der ein optimiertes Build-Paket erstellt.
+
 ## Backend
 
 ## Challenges
